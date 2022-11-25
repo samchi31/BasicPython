@@ -10,7 +10,7 @@ if rnd > 0.5 :
 else:
     com = "홀"
 
-print(rnd,com)
+# print(rnd,com)
 if me == com:
     print("이김")
 else :
