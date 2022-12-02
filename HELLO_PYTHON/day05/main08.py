@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import random
 
-from_class = uic.loadUiType("main06.ui")[0]
+from_class = uic.loadUiType("main08.ui")[0]
 class MyWindow(QMainWindow, from_class):
     def __init__(self):
         super().__init__()
@@ -11,14 +11,17 @@ class MyWindow(QMainWindow, from_class):
         
         self.btn1.clicked.connect(self.f_click)
         
-        
     def f_click(self):
-        dan = int(self.lineEdit_1.text())
-        for i in range(1,10):
-            # self.lineEdit_2.insert("{} * {} = {}\n".format(i,dan,i*dan))
-            # self.textEdit.append("{} * {} = {}".format(i,dan,i*dan))  
-            self.lineEdit_2.insert(f"{i} * {dan} = {i*dan}\n") 
-            self.textEdit.append(f"{i} * {dan} = {i*dan}\n") 
+        start = int(self.le_1.text())
+        last = int(self.le_2.text())
+        
+        result = ""
+        for i in range(start,last+1):
+            for j in range(0,i):
+                result+="*"
+            result+="\n"
+        self.pte.setPlainText(result)
+        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
