@@ -3,7 +3,7 @@
 import random
 
 rnd = random.random()
-me = input("홀/짝 입력:")
+me = text("홀/짝 입력:")
 com = ""
 if rnd > 0.5 :
     com = "짝"

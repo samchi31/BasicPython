@@ -15,14 +15,14 @@ class MyWindow(QMainWindow, from_class):
   
     
     def f_click(self):
-        input = self.le.text()
+        text = self.le.text()
         
         ballCnt = 0
         strikeCnt = 0
         
         for ch in self.com:
-            if ch in input:
-                if(self.com.index(ch)==input.index(ch)):
+            if ch in text:
+                if(self.com.index(ch)==text.index(ch)):
                     strikeCnt+=1
                 else:
                     ballCnt+=1
@@ -37,7 +37,7 @@ class MyWindow(QMainWindow, from_class):
             result = "3 Out\n"
         else :
             result = "{} Ball, {} Strike\n".format(ballCnt, strikeCnt) 
-        self.pte.appendPlainText("{} : {} Strike\n".format(input,result))
+        self.pte.appendPlainText("{} : {} Strike\n".format(text,result))
         
     def popup(self):
         QMessageBox.question(None,'축하축하', '정답', QMessageBox.Yes, QMessageBox.NoButton)

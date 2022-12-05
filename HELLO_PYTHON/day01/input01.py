@@ -1,2 +1,2 @@
-a = input("아무거나")
+a = text("아무거나")
 print(a)

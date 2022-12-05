@@ -1,7 +1,7 @@
 # 가위바위보
 from random import random
 
-me = input("가위 바위 보 입력 : ");
+me = text("가위 바위 보 입력 : ");
 
 coms = ["가위", "바위", "보"]
 
