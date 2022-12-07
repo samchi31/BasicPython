@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<script type="text/javascript">
+
+	{% if cnt <= 0 %}
+		alert('실패');
+		history.back();
+	{% else %}	
+		alert('성공');
+		location.href = "emp_list";
+	{% endif %}
+
+	
+</script>
+</body>
+</html>

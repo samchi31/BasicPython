@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	LIST
+	<table border='1'>
+	  {#
+	  <tr>   
+	  {% for row in list[0].keys() %}
+       	  <th>{{row}} </th>
+      {% endfor %}
+      </tr>
+      <tr>
+        {% for item in row.values() %}
+       	  <td><a href="emp_detail?e_id={{item}}">{{item}}</a> </td>
+       	{% endfor %}
+      <tr>
+      #}
+      
+	  <tr><th>사번</th><th>이름</th><th>성별</th><th>주소</th></tr>
+	  {% for row in list %}
+      <tr>   
+		<td><a href="emp_detail?e_id={{row.e_id}}">{{row.e_id}}</a></td>
+		<td>{{row.e_id}}</td>
+		<td>{{row.e_id}}</td>
+		<td>{{row.e_id}}</td>
+      </tr>
+      {% endfor %}
+      
+	</table>
+	<input type="button" value="추가">
+<script type="text/javascript">
+
+const btn = document.querySelector("input");
+btn.addEventListener('click',function(){
+	location.href="/emp_insert";
+})
+
+
+</script>
+</body>
+</html>

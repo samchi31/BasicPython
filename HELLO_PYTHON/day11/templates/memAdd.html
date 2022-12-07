@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="post" action="/mem_add_act">
+  	<table border='1'>
+		<tr>
+		  <td>id</td>
+		  <td><input type="text" name="m_id" /></td>
+		</tr>
+		<tr>
+		  <td>이름</td>
+		  <td><input type="text" name="m_nm" /></td>
+		</tr>
+		<tr>
+		  <td>전화번호</td>
+		  <td><input type="text" name="tel" /></td>
+		</tr>
+		<tr>
+		  <td>생년월일</td>
+		  <td><input type="text" name="ymd" /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			<input type="submit" value = "작성" />
+			<button id="btn_cancel">취소</button>
+			</td>
+		</tr>	
+	</table>
+	</form>
+	
+<script type="text/javascript">
+const btn_cancel = document.querySelector('#btn_cancel');
+btn_cancel.addEventListener("click", function(){
+	location.href="/mem_list";
+});
+</script>
+</body>
+</html>

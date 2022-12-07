@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table border='1'>
+		{% for item in info %}
+		<tr>
+			<td>{{item}}</td>
+			<td>{{info[item]}}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<td colspan="2">
+			<button id="btn_edit">수정</button>
+			<button id="btn_list">목록</button>
+			<button id="btn_delete">삭제</button>
+			</td>
+		</tr>	
+	</table>
+	
+<script type="text/javascript">
+
+const btn_edit = document.querySelector('#btn_edit');
+const btn_list = document.querySelector('#btn_list');
+const btn_delete = document.querySelector('#btn_delete');
+
+btn_edit.addEventListener("click", function(){
+	location.href="/mem_edit?m_id={{info.m_id}}";
+});
+
+btn_list.addEventListener("click", function(){
+	location.href="/mem_list";
+});
+
+btn_delete.addEventListener("click", function(){
+	if(!confirm("삭제하시겠습니까?")){
+		return;
+	}
+	location.href="/mem_delete?m_id={{info.m_id}}";
+});
+
+
+</script>
+</body>
+</html>

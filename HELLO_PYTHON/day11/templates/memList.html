@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table border='1'>
+	  <tr><th>id</th><th>이름</th><th>전화번호</th><th>생년월일</th></tr>
+	  {% for row in list %}
+      <tr>   
+		<td><a href="mem_detail?m_id={{row.m_id}}">{{row.m_id}}</a></td>
+		<td>{{row.m_nm}}</td>
+		<td>{{row.tel}}</td>
+		<td>{{row.ymd}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+	<input type="button" value="추가">
+	
+<script type="text/javascript">
+
+const btn = document.querySelector("input");
+btn.addEventListener('click',function(){
+	location.href="/mem_add";
+})
+
+
+</script>
+</body>
+</html>

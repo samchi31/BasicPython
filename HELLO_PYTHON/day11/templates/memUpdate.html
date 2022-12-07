@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="post" action="/mem_edit_act">
+	  	<table border='1'>
+			{% for item in info %}
+			<tr>
+				<td>{{item}}</td>
+				<td><input type="text" name="{{item}}" value="{{info[item]}}" /></td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td colspan="2">
+				<input type="submit" value = "수정" />
+				<button id="btn_cancel">취소</button>
+				</td>
+			</tr>	
+		</table>
+	</form>
+	<script type="text/javascript">
+	const btn_cancel = document.querySelector('#btn_cancel');
+	btn_cancel.addEventListener("click", function(){
+		location.href="/mem_list";
+	});
+	</script>
+</body>
+</html>

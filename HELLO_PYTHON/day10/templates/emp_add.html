@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form method="post" action="/emp_add">
+  	<table border='1'>
+		<tr>
+		  <td>사번</td>
+		  <td><input type="text" name="e_id" /></td>
+		</tr>
+		<tr>
+		  <td>이름</td>
+		  <td><input type="text" name="e_name" /></td>
+		</tr>
+		<tr>
+		  <td>성별</td>
+		  <td><input type="text" name="sex" /></td>
+		</tr>
+		<tr>
+		  <td>주소</td>
+		  <td><input type="text" name="addr" /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			<input type="submit" value = "작성" />
+			<button id="btn_cancel">취소</button>
+			</td>
+		</tr>	
+	</table>
+	</form>
+	
+<script type="text/javascript">
+const btn_cancel = document.querySelector('#btn_cancel');
+btn_cancel.addEventListener("click", function(){
+	location.href="/emp_list";
+});
+</script>
+</body>
+</html>
