@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!-- <script src="https://code.jquery.com/jquery-latest.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+function fn_one(s_id){
+	var postdata = {
+            'id':s_id
+    };
+	$.ajax({
+        type: 'POST',
+        url: '{{url_for("ajax_one")}}',
+        data: JSON.stringify(postdata),
+        dataType : 'JSON',
+        contentType: "application/json",
+        success: function(data){
+       		$('#s_id').val(data.result.s_id);
+       		$('#s_name').val(data.result.s_name);
+       		$('#mobile').val(data.result.mobile);
+       		$('#addr').val(data.result.address);
+        },
+        error: function(request, status, error){
+        	console.log(error);
+        }
+    });
+};
+
+function fn_list(){
+    $.ajax({
+        type: 'POST',
+        url: '{{url_for("ajax_list")}}',
+        dataType : 'JSON',
+        contentType: "application/json",
+        success: function(data){
+        	if(data.result.length <= 0 ) return;
+      		$('#my_tbody').html('');
+      		for(let i = 0; i< data.result.length;i++){
+      			var v_tr = $('<tr>');
+      			var item = data.result[i];
+      			v_tr.append($('<td>').html(
+      					'<a href="javascript:fn_one('+item.s_id+')">'+item.s_id+'</a>'));
+      			v_tr.append($('<td>').html(item.s_name));
+      			v_tr.append($('<td>').html(item.mobile));
+      			v_tr.append($('<td>').html(item.address));
+      			$('#my_tbody').append(v_tr);
+      		}
+        },
+        error: function(request, status, error){
+        	console.log(error);
+        }
+    });	
+};
+
+
+window.onload = function(){
+	fn_list();	
+	
+	$('#id_add').on('click',function(){
+		var postdata = {
+	            'id':$('#s_id').val(),
+	            'name': $('#s_name').val(),
+				'mobile': $('#mobile').val(),
+				'addr': $('#addr').val()
+	    };
+		$.ajax({
+	        type: 'POST',
+	        url: '{{url_for("ajax_add")}}',
+	        data: JSON.stringify(postdata),
+	        dataType : 'JSON',
+	        contentType: "application/json",
+	        success: function(data){
+	        	if(data.result > 0)
+	        		fn_list();
+	        	else
+	        		alert("실패");
+	        },
+	        error: function(request, status, error){
+	        	console.log(error);
+	        }
+	    });
+	});
+	
+	$('#id_edit').on('click',function(){
+		var postdata = {
+				'id':$('#s_id').val(),
+	            'name': $('#s_name').val(),
+				'mobile': $('#mobile').val(),
+				'addr': $('#addr').val()
+	    };
+		$.ajax({
+	        type: 'POST',
+	        url: '{{url_for("ajax_edit")}}',
+	        data: JSON.stringify(postdata),
+	        dataType : 'JSON',
+	        contentType: "application/json",
+	        success: function(data){
+	        	if(data.result > 0)
+	        		fn_list();
+	        	else
+	        		alert("실패");
+	        },
+	        error: function(request, status, error){
+	        	console.log(error);
+	        }
+	    });
+	});
+	
+	$('#id_delete').on('click',function(){
+		var postdata = {
+	            'id':$('#s_id').val()
+	    };
+		$.ajax({
+	        type: 'POST',
+	        url: '{{url_for("ajax_delete")}}',
+	        data: JSON.stringify(postdata),
+	        dataType : 'JSON',
+	        contentType: "application/json",
+	        success: function(data){
+	        	if(data.result > 0)
+	        		fn_list();
+	        	else
+	        		alert("실패");
+	        },
+	        error: function(request, status, error){
+	        	console.log(error);
+	        }
+	    });
+	});
+}
+
+
+</script>
+
+</head>
+<body>
+	
+	<table border="1">
+		<thead>
+			<tr>
+				<th>학번</th>
+				<th>이름</th>
+				<th>전화번호</th>
+				<th>주소</th>
+			</tr>
+		</thead>
+		<tbody id="my_tbody">
+			<tr>
+				<td colspan="4">검색된 데이터가 없습니다</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<table border="1">
+		<tr>
+			<td>사번</td>
+			<td><input type="text" id="s_id" /></td>
+		</tr>
+		<tr>
+			<td>이름</td>
+			<td><input type="text" id="s_name" /></td>
+		</tr>
+		<tr>
+			<td>성별</td>
+			<td><input type="text" id="mobile" /></td>
+		</tr>
+		<tr>
+			<td>주소</td>
+			<td><input type="text" id="addr" /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			  <input type="button" value="추가" id="id_add"/>
+			  <input type="button" value="수정" id="id_edit"/>
+			  <input type="button" value="삭제" id="id_delete"/>
+			</td>
+		</tr>
+	</table>
+	
+
+</body>
+</html>

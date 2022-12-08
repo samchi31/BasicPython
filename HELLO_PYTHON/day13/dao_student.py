@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2 import extras
 
-class DaoSample:
+class DaoStudent:
     def __init__(self):
         self.connection = psycopg2.connect(host="localhost", dbname="python", user="postgres", password="python", port=5432)
 
@@ -13,8 +13,8 @@ class DaoSample:
         
     def selects(self):
         sql=f'''
-            SELECT e_id,e_name,sex,addr FROM emp
-            order by e_id
+            SELECT s_id,s_name,mobile,address FROM student
+            order by s_id
             '''
         result = []
         self.cur.execute(sql)
@@ -23,41 +23,41 @@ class DaoSample:
             result.append(dict(row))
         return result
     
-    def select(self, e_id):
+    def select(self, s_id):
         sql=f'''
-            SELECT e_id,e_name,sex,addr FROM emp
-            where e_id = '{e_id}'
+            SELECT s_id,s_name,mobile,address FROM student
+            where s_id = '{s_id}'
             '''
         self.cur.execute(sql)
         data = self.cur.fetchall()
         # print(data, len(data), type(data))
         return dict(data[0])
     
-    def insert(self, e_id,e_name,sex,addr):
+    def insert(self, s_id,s_name,mobile,address):
         sql=f'''
-            insert into emp
-            values ('{e_id}','{e_name}','{sex}','{addr}')
+            insert into student
+            values ('{s_id}','{s_name}','{mobile}','{address}')
             '''
         self.cur.execute(sql)
         self.connection.commit()
         return self.cur.rowcount 
     
-    def update(self, e_id,e_name,sex,addr):
+    def update(self, s_id,s_name,mobile,address):
         sql = f'''
-            update    emp
-            set     e_name = '{e_name}',
-                    sex = '{sex}',
-                    addr = '{addr}'
-            where     e_id = '{e_id}'
+            update    student
+            set     s_name = '{s_name}',
+                    mobile = '{mobile}',
+                    address = '{address}'
+            where     s_id = '{s_id}'
             '''
         self.cur.execute(sql)
         self.connection.commit()
         return self.cur.rowcount 
     
-    def delete(self, e_id):
+    def delete(self, s_id):
         sql = f'''
-            delete from    emp
-            where     e_id = '{e_id}'
+            delete from    student
+            where     s_id = '{s_id}'
             '''
         self.cur.execute(sql)
         self.connection.commit()

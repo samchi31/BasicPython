@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!-- <script src="https://code.jquery.com/jquery-latest.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+function fn_one(e_id){
+	console.log(e_id);
+		var postdata = {
+	            'id':e_id
+	    };
+		$.ajax({
+	        type: 'POST',
+	        url: '{{url_for("ajax_one")}}',
+	        data: JSON.stringify(postdata),
+	        dataType : 'JSON',
+	        contentType: "application/json",
+	        success: function(data){
+	        	console.log(data);
+	        	if(data.result == 'success'){
+	        		$('#e_id').val(data.result2.e_id);
+	        		$('#e_name').val(data.result2.e_name);
+	        		$('#sex').val(data.result2.sex);
+	        		$('#addr').val(data.result2.addr);
+	        	}
+	        },
+	        error: function(request, status, error){
+	        	console.log(error);
+	        }
+	    });
+};
+
+function fn_list(){
+    $.ajax({
+        type: 'POST',
+        url: '{{url_for("ajax")}}',
+//	        data: JSON.stringify(postdata),
+        dataType : 'JSON',
+        contentType: "application/json",
+        success: function(data){
+//	        	console.log(data);
+        	if(data.result == 'success'){
+        		$('#my_tbody').html('');
+        		for(let i = 0; i< data.result2.length;i++){
+        			var v_tr = $('<tr>');
+        			var item = data.result2[i];
+//	        			console.log(item.e_id);
+        			v_tr.append($('<td>').html(
+        					'<a href="javascript:fn_one('+item.e_id+')">'+item.e_id+'</a>'));
+        			v_tr.append($('<td>').html(item.e_name));
+        			v_tr.append($('<td>').html(item.sex));
+        			v_tr.append($('<td>').html(item.addr));
+        			$('#my_tbody').append(v_tr);
+        		}
+        	}
+        },
+        error: function(request, status, error){
+        	console.log(error);
+        }
+    });	
+};
+
+
+window.onload = function(){
+	fn_list();	
+	
+	$('#id_add').on('click',function(){
+		var postdata = {
+	            'id':$('#e_id').val(),
+	            'name': $('#e_name').val(),
+				'sex': $('#sex').val(),
+				'addr': $('#addr').val()
+	    };
+		$.ajax({
+	        type: 'POST',
+	        url: '{{url_for("ajax_add")}}',
+	        data: JSON.stringify(postdata),
+	        dataType : 'JSON',
+	        contentType: "application/json",
+	        success: function(data){
+	        	if(data.result=="success"&&data.result2 > 0)
+	        		fn_list();
+	        	else
+	        		alert("실패");
+	        },
+	        error: function(request, status, error){
+	        	console.log(error);
+	        }
+	    });
+	});
+	
+	$('#id_edit').on('click',function(){
+		var postdata = {
+	            'id':$('#e_id').val(),
+	            'name': $('#e_name').val(),
+				'sex': $('#sex').val(),
+				'addr': $('#addr').val()
+	    };
+		$.ajax({
+	        type: 'POST',
+	        url: '{{url_for("ajax_edit")}}',
+	        data: JSON.stringify(postdata),
+	        dataType : 'JSON',
+	        contentType: "application/json",
+	        success: function(data){
+	        	if(data.result=="success"&&data.result2 > 0)
+	        		fn_list();
+	        	else
+	        		alert("실패");
+	        },
+	        error: function(request, status, error){
+	        	console.log(error);
+	        }
+	    });
+	});
+	
+	$('#id_delete').on('click',function(){
+		var postdata = {
+	            'id':$('#e_id').val()
+	    };
+		$.ajax({
+	        type: 'POST',
+	        url: '{{url_for("ajax_delete")}}',
+	        data: JSON.stringify(postdata),
+	        dataType : 'JSON',
+	        contentType: "application/json",
+	        success: function(data){
+	        	if(data.result=="success"&&data.result2 > 0)
+	        		fn_list();
+	        	else
+	        		alert("실패");
+	        },
+	        error: function(request, status, error){
+	        	console.log(error);
+	        }
+	    });
+	});
+}
+
+
+</script>
+
+</head>
+<body>
+	hello
+	<a href="javascript:fn_ajax()">CALL</a>
+	
+	<table border="1">
+		<thead>
+			<tr>
+				<th>사번</th>
+				<th>이름</th>
+				<th>성별</th>
+				<th>주소</th>
+			</tr>
+		</thead>
+		<tbody id="my_tbody">
+			<tr>
+				<td colspan="4">검색된 데이터가 없습니다</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<table border="1">
+		<tr>
+			<td>사번</td>
+			<td><input type="text" id="e_id" /></td>
+		</tr>
+		<tr>
+			<td>이름</td>
+			<td><input type="text" id="e_name" /></td>
+		</tr>
+		<tr>
+			<td>성별</td>
+			<td><input type="text" id="sex" /></td>
+		</tr>
+		<tr>
+			<td>주소</td>
+			<td><input type="text" id="addr" /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			  <input type="button" value="추가" id="id_add"/>
+			  <input type="button" value="수정" id="id_edit"/>
+			  <input type="button" value="삭제" id="id_delete"/>
+			</td>
+		</tr>
+	</table>
+	
+
+</body>
+</html>
