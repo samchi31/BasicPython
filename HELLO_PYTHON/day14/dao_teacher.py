@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2 import extras
 
-class DaoStudent:
+class DaoTeacher:
     def __init__(self):
         self.connection = psycopg2.connect(host="localhost", dbname="python", user="postgres", password="python", port=5432)
 
@@ -13,8 +13,8 @@ class DaoStudent:
         
     def selects(self):
         sql=f'''
-            SELECT s_id,s_name,mobile,address FROM student
-            order by s_id
+            SELECT t_id,t_name,mobile,addr FROM teacher
+            order by t_id
             '''
         result = []
         try :
@@ -26,10 +26,10 @@ class DaoStudent:
             print(e)
         return result
     
-    def select(self, s_id):
+    def select(self, t_id):
         sql=f'''
-            SELECT s_id,s_name,mobile,address FROM student
-            where s_id = '{s_id}'
+            SELECT t_id,t_name,mobile,addr FROM teacher
+            where t_id = '{t_id}'
             '''
         try :
             self.cur.execute(sql)
@@ -39,44 +39,47 @@ class DaoStudent:
         # print(data, len(data), type(data))
         return dict(data[0])
     
-    def insert(self, s_id,s_name,mobile,address):
+    def insert(self, t_name,mobile,addr):
         sql=f'''
-            insert into student
-            values ('{s_id}','{s_name}','{mobile}','{address}')
+            insert into teacher
+            values (nextval('t_seq'),'{t_name}','{mobile}','{addr}')
             '''
-        try :
-            self.cur.execute(sql)
-        except Exception as e:
-            print(e)
-            return 0; 
+        # try :
+        #     self.cur.execute(sql)
+        # except Exception as e:
+        #     print(e)
+        #     return 0
+        self.cur.execute(sql)
         self.connection.commit()
         return self.cur.rowcount 
     
-    def update(self, s_id,s_name,mobile,address):
+    def update(self, t_id,t_name,mobile,addr):
         sql = f'''
-            update    student
-            set     s_name = '{s_name}',
+            update    teacher
+            set     t_name = '{t_name}',
                     mobile = '{mobile}',
-                    address = '{address}'
-            where     s_id = '{s_id}'
+                    addr = '{addr}'
+            where     t_id = '{t_id}'
             '''
-        try :
-            self.cur.execute(sql)
-        except Exception as e:
-            print(e)
-            return 0; 
+        # try :
+        #     self.cur.execute(sql)
+        # except Exception as e:
+        #     print(e)
+        #     return 0
+        self.cur.execute(sql)
         self.connection.commit()
         return self.cur.rowcount 
     
-    def delete(self, s_id):
+    def delete(self, t_id):
         sql = f'''
-            delete from    student
-            where     s_id = '{s_id}'
+            delete from    teacher
+            where     t_id = '{t_id}'
             '''
-        try:
-            self.cur.execute(sql)
-        except Exception as e:
-            print(e)
-            return 0; 
+        # try :
+        #     self.cur.execute(sql)
+        # except Exception as e:
+        #     print(e.args)
+        #     return 0
+        self.cur.execute(sql)
         self.connection.commit()
         return self.cur.rowcount 
