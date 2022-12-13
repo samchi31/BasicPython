@@ -26,7 +26,20 @@
          import * as THREE from 'three';
 
          let camera, scene, renderer;
-         let player , enemy;
+         let player;
+		 let p_bullet;
+		 let isShot = false;
+		 
+		 var enemies = []; // 배열공간 만들기
+			
+		// xzs 배열 안에 json 형태로 좌표 값 집어넣기
+		var xzs = [
+			{'x':-300,	'z':300,	'color':0xE06666},
+			{'x':300,	'z':300,	'color':0xFFD966},
+			
+			{'x':-100,	'z':-100,	'color':0x8E7CC3},
+			{'x':100,	'z':-100,	'color':0xCCCCCC}
+		];	
 
          function init() {
 
@@ -43,16 +56,30 @@
             const material = new THREE.MeshBasicMaterial( { map: texture } );
 
 			const texture1 = new THREE.TextureLoader().load( 'tangtang/bad.png' );
-			const geometry1 = new THREE.BoxGeometry( 100, 0, 100 );
-            const material1 = new THREE.MeshBasicMaterial( { map: texture1 } );
 
-			enemy = new THREE.Mesh( geometry1, material1 );
-			enemy.position.x = 200;
-			enemy.position.y = 200;
-			scene.add( enemy );
+			// for문 돌려서 ufo 9개 만들고
+			for(var i=0; i<xzs.length; i++){
+				var geometry1 = new THREE.BoxGeometry( 100, 0, 100 );
+				var material1 = new THREE.MeshBasicMaterial( {map: texture1} );
+				var mesh = new THREE.Mesh( geometry1, material1 );
+				enemies.push( mesh );
+				scene.add( mesh );
+			}
+			
+			// 위에서 만든 enemies 들에게 x, z 좌표값 부여하기
+			for(var i=0; i<xzs.length; i++){
+				enemies[i].position.x = xzs[i].x
+				enemies[i].position.z = xzs[i].z
+			}
 			
             player = new THREE.Mesh( geometry, material );
             scene.add( player );
+			
+			const geometry2 = new THREE.SphereGeometry( 10, 30, 10 );
+			const material2 = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+	
+			p_bullet = new THREE.Mesh( geometry2, material2 );
+			scene.add( p_bullet );
 			
 			camera.lookAt(player.position);
 
@@ -87,11 +114,20 @@
 			var rad = player.rotation.y;
             var s = Math.sin(rad)*p_speed;
             var c = Math.cos(rad)*p_speed;
-            
+            //console.log(rad);
+			//console.log(s,c);
 
             player.position.z += -c;
             player.position.x += -s;
-
+			
+			var sin = Math.sin(rad)*2;
+			var cos = Math.cos(rad)*2;
+			
+			if(isShot){
+				p_bullet.position.z += -cos;
+				p_bullet.position.x += -sin;
+				//isShot = false;
+			}
             renderer.render( scene, camera );
          }
          
@@ -100,7 +136,7 @@
          
          document.addEventListener("keydown", onDocumentKeyDown, false);
          function onDocumentKeyDown(event){
-         
+			//console.log(event.keyCode);
             var key = event.key;
             if(key == 'ArrowUp'){
                p_speed += 0.1;
@@ -110,7 +146,10 @@
                player.rotation.y += 0.02;
             } else if (key == 'ArrowRight') {
                player.rotation.y -= 0.02;
-            }
+            } else if (event.keyCode == 32){
+				//p_bullet++;
+				isShot = true;
+			}
 			
 			if(p_speed<0){
 				p_speed = 0;
