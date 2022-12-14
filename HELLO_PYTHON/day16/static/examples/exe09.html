@@ -7,7 +7,12 @@
       <link type="text/css" rel="stylesheet" href="main.css">
    </head>
    <body>
-
+		 
+		<div style="position:absolute">
+			<span>남은총알:</span><span id="span_cnt_bullet">10</span> <br/>
+			<span>남은 적:</span><span id="span_cnt_enemy">4</span>
+		</div>
+		
       <!-- Import maps polyfill -->
       <!-- Remove this when import maps will be widely supported -->
       <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
@@ -27,39 +32,44 @@
 
          let camera, scene, renderer;
          let player;
-		 let p_bullet;
-		 let isShot = false;
+		
+		let isOver = false;
+		 
+		 let bullets = [];
 		 
 		 var enemies = []; // 배열공간 만들기
+		 
+		 let span_cnt_bullet = document.querySelector('#span_cnt_bullet');
+		 let span_cnt_enemy = document.querySelector('#span_cnt_enemy');
 			
 		// xzs 배열 안에 json 형태로 좌표 값 집어넣기
 		var xzs = [
-			{'x':-300,	'z':300,	'color':0xE06666},
-			{'x':300,	'z':300,	'color':0xFFD966},
+			{'x':-500,	'z':500,	'color':0xE06666},
+			{'x':500,	'z':500,	'color':0xFFD966},
 			
-			{'x':-100,	'z':-100,	'color':0x8E7CC3},
-			{'x':100,	'z':-100,	'color':0xCCCCCC}
+			{'x':-500,	'z':-500,	'color':0x8E7CC3},
+			{'x':500,	'z':-500,	'color':0xCCCCCC}
 		];	
 
          function init() {
 
-            camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
+            camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
             camera.position.z = 0;
-            camera.position.y = 1000;
-            console.log(camera.position)
+            camera.position.y = 700;
+            //console.log(camera.position)
 
             scene = new THREE.Scene();
 
             const texture = new THREE.TextureLoader().load( 'tangtang/pixelPlane.png' );
 
-            const geometry = new THREE.BoxGeometry( 100, 0, 100 );
+            const geometry = new THREE.BoxGeometry( 100, 1, 100 );
             const material = new THREE.MeshBasicMaterial( { map: texture } );
 
 			const texture1 = new THREE.TextureLoader().load( 'tangtang/bad.png' );
 
 			// for문 돌려서 ufo 9개 만들고
 			for(var i=0; i<xzs.length; i++){
-				var geometry1 = new THREE.BoxGeometry( 100, 0, 100 );
+				var geometry1 = new THREE.BoxGeometry( 100, 1, 100 );
 				var material1 = new THREE.MeshBasicMaterial( {map: texture1} );
 				var mesh = new THREE.Mesh( geometry1, material1 );
 				enemies.push( mesh );
@@ -68,18 +78,12 @@
 			
 			// 위에서 만든 enemies 들에게 x, z 좌표값 부여하기
 			for(var i=0; i<xzs.length; i++){
-				enemies[i].position.x = xzs[i].x
-				enemies[i].position.z = xzs[i].z
+				enemies[i].position.x = xzs[i].x;
+				enemies[i].position.z = xzs[i].z;
 			}
 			
             player = new THREE.Mesh( geometry, material );
             scene.add( player );
-			
-			const geometry2 = new THREE.SphereGeometry( 10, 30, 10 );
-			const material2 = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-	
-			p_bullet = new THREE.Mesh( geometry2, material2 );
-			scene.add( p_bullet );
 			
 			camera.lookAt(player.position);
 
@@ -102,14 +106,13 @@
             renderer.setSize( window.innerWidth, window.innerHeight );
 
          }
-
+		 var p_speed = 0;
          function animate() {
-
-            requestAnimationFrame( animate );
-
-            //player.position.z += 1;
-            //player.rotation.x += 0.005;
-            //player.rotation.y += 0.01;
+			
+			if(isOver){
+				return;
+			}
+			requestAnimationFrame( animate );
 			
 			var rad = player.rotation.y;
             var s = Math.sin(rad)*p_speed;
@@ -120,19 +123,38 @@
             player.position.z += -c;
             player.position.x += -s;
 			
-			var sin = Math.sin(rad)*2;
-			var cos = Math.cos(rad)*2;
-			
-			if(isShot){
-				p_bullet.position.z += -cos;
-				p_bullet.position.x += -sin;
-				//isShot = false;
+						
+			for(let i =0; i< bullets.length; i++){	
+				let b_rad = bullets[i].rotation.y;
+				let b_speed = 5;
+				let sin = Math.sin(b_rad)*b_speed;
+				let cos = Math.cos(b_rad)*b_speed;
+				bullets[i].position.z += -cos;
+				bullets[i].position.x += -sin;
+				
 			}
+			
+			for(let i=0;i<enemies.length;i++){
+				let num1 = player.position.z - enemies[i].position.z;
+				let num2 = player.position.x - enemies[i].position.x;
+				let r = Math.sqrt(Math.pow(num1,2) + Math.pow(num2,2));
+				
+				let f_speed = 1.1;
+				let dx = num2/r*f_speed;
+				let dz = num1/r*f_speed;
+				
+				
+				enemies[i].position.x += dx;
+				enemies[i].position.z += dz;				
+
+			}
+			
+			func1();
+			func2();
+			camera.lookAt(player.position);
             renderer.render( scene, camera );
          }
-         
-
-         var p_speed = 0;
+                
          
          document.addEventListener("keydown", onDocumentKeyDown, false);
          function onDocumentKeyDown(event){
@@ -147,8 +169,7 @@
             } else if (key == 'ArrowRight') {
                player.rotation.y -= 0.02;
             } else if (event.keyCode == 32){
-				//p_bullet++;
-				isShot = true;
+				shooting();
 			}
 			
 			if(p_speed<0){
@@ -156,6 +177,76 @@
 			}
             //console.log(p_speed, player.rotation.y, s, c);
          };
+		 
+		 let b_texture = new THREE.TextureLoader().load( 'tangtang/bullet.png' );
+		 function shooting(){
+		 
+			//console.log(bullets.length);
+			
+			let cnt_bullet = parseInt(span_cnt_bullet.innerHTML);
+			if(cnt_bullet--<=0) return;
+			span_cnt_bullet.innerHTML=cnt_bullet;
+			
+			var geometry2 = new THREE.BoxGeometry( 40, 1, 40 );
+			var material2 = new THREE.MeshBasicMaterial( {map: b_texture} );
+	
+			var p_bullet = new THREE.Mesh( geometry2, material2 );
+			
+			p_bullet.position.x = player.position.x;	
+			p_bullet.position.z = player.position.z;	
+			p_bullet.rotation.y = player.rotation.y;
+			
+			scene.add( p_bullet );
+			
+			bullets.push(p_bullet);
+		 };
+		 
+		 function func1(){
+			for(let i=0;i<enemies.length;i++){
+				let num1 = player.position.z - enemies[i].position.z;
+				let num2 = player.position.x - enemies[i].position.x;
+				let r = Math.sqrt(Math.pow(num1,2) + Math.pow(num2,2));
+				
+				if(r < 80){
+					//console.log("충돌");
+					setTimeout(alert("게임오버"),1);
+					
+					p_speed = 0;
+					isOver = true;
+					return;
+				}
+
+			}
+		 }
+		 
+		 function func2(){
+			for(let i=0; i<enemies.length;i++){								
+				for(let j =0; j< bullets.length; j++){	
+				
+					let num1 = bullets[j].position.z - enemies[i].position.z;
+					let num2 = bullets[j].position.x - enemies[i].position.x;
+					let r = Math.sqrt(num1*num1 + num2*num2);
+					if(r<80){
+						//console.log("충돌",i,j);
+						
+						scene.remove(enemies[i]);
+						scene.remove(bullets[j]);
+						enemies.splice(i,1);
+						bullets.splice(i,1);
+						
+						let cnt_enemy = parseInt(span_cnt_enemy.innerHTML);
+						cnt_enemy--;
+						span_cnt_enemy.innerHTML=cnt_enemy;
+						if(cnt_enemy<=0) {
+							setTimeout(alert("이김"),1);
+							renderer.render( scene, camera );
+							isOver = true;
+						}
+						return;
+					}
+				}	
+			}
+		 }
 		 
 		 init();
 		 animate();
