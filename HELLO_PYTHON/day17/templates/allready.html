@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <style type="text/css">
+    #id_name{
+    	width:60px;
+    }
+    table{
+    	width:200px;
+    }
+    </style>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+	<script type="text/javascript">
+		var sock;
+		function fn_init(){
+            sock = io.connect('http://192.168.35.24:9999');
+            sock.on('connect', function(){
+                console.log("i connect");
+            });
+
+            sock.on('message', function(msg){
+            	var info = msg.message;
+            	var infos = info.split(":");
+            	if(infos[0]=='ready')
+            		rv_ready(infos[1]);
+            	if(infos[0]=='isDone')
+            		rv_isdone(infos[1]);
+            	if(infos[0]=="done"){
+            		rv_done(infos[1]);
+            	}
+            });
+
+		}
+		window.onload=fn_init();
+		
+		function myclick(){
+			sock.send("myclick");
+		}
+		
+		function fn_ready(){
+			
+			var obj_id_name = document.querySelector("#id_name");
+			const regex = /[가-힣]{3}/;
+			if(!regex.test(obj_id_name.value)) return;
+			sock.send("ready:"+obj_id_name.value);
+		}
+		
+		
+		var users = [];
+		function checkUser(username){
+			for(var i=0;i<users.length;i++){
+				if(users[i]==username){
+					return i;
+				}
+			}
+			
+			return -1;
+		}
+		function rv_ready(username){
+// 			var idx = checkUser(username);
+// 			if(idx == -1){
+// 				users.push(username)w;
+// 			}
+			var st_names = document.querySelectorAll(".st_name");	
+			if(users.includes(username)) return;
+			
+			users.push(username);
+			for (let i=0;i<users.length;i++){
+				st_names[i].innerHTML = users[i];
+			}
+		}
+		
+		function fn_isDone(){
+			sock.send("isDone:"+users);
+		}
+		function rv_isdone(userlist){
+			users = userlist.split(",");			
+			
+			var st_names = document.querySelectorAll(".st_name");	
+			
+			for (let i=0;i<st_names.length;i++){
+				st_names[i].innerHTML = "__";
+				st_names[i].style.backgroundColor = "white";
+			}
+			for (let i=0;i<users.length;i++){
+				st_names[i].innerHTML = users[i];
+				st_names[i].style.backgroundColor = "red";
+			}	
+		}
+		
+		function fn_done(){
+			let id_name = document.querySelector("#id_name");
+			sock.send("done:"+id_name.value);
+		}
+		
+		function rv_done(username){
+			var id = checkUser(username);
+			var st_names = document.querySelectorAll(".st_name");	
+			st_names[id].style.backgroundColor = "blue";
+		}
+		
+	</script>
+
+</head>
+<body >
+	
+	<input type="text" id="id_name" >
+	<input type="button" value="READY" onclick="fn_ready()">
+	<input type="button" value="다됐슈" onclick="fn_done()">
+	
+	<table border="1">
+		<tr>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+		</tr>
+		<tr>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+		</tr>
+		<tr>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+		</tr>
+		<tr>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+		</tr><tr>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+			<td class="st_name">__</td>
+		</tr>
+	</table>
+	
+	<input type="button" value="다됐냐" onclick="fn_isDone()">
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
