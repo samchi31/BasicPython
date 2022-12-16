@@ -140,19 +140,86 @@
 				let r = Math.sqrt(Math.pow(num1,2) + Math.pow(num2,2));
 				
 				let f_speed = 1.1;
-				let dx = num2/r*f_speed;
-				let dz = num1/r*f_speed;
+				let dx = (num2/r)*f_speed;
+				let dz = (num1/r)*f_speed;
 				
 				
 				enemies[i].position.x += dx;
-				enemies[i].position.z += dz;				
-
+				enemies[i].position.z += dz;			
 			}
-			
-			func1();
-			func2();
 			camera.lookAt(player.position);
-            renderer.render( scene, camera );
+			
+			//func1();
+			
+            //renderer.render( scene, camera );
+			//func2();
+			// 플레이어랑 적이랑 부딪히면 gameOver
+				for(var i=0; i<enemies.length; i++){
+					var e = enemies[i];
+					var ex = e.position.x;
+					var ez = e.position.z;
+					var px = player.position.x;
+					var pz = player.position.z;
+					var r = Math.sqrt(((ex-px)*(ex-px))+((ez-pz)*(ez-pz)))
+					
+					if(r < 50){
+						setTimeout("alert('게임오버')",1);
+						isOver = true;
+						p_speed = 0;
+						return;
+					}
+				}
+				
+				var str_charaters_pos = "";
+				for(var i=0; i<enemies.length; i++){
+					var e = enemies[i];
+					var ex = parseInt(e.position.x);
+					var ez = parseInt(e.position.z);
+					str_charaters_pos += "b."+ex+"."+ez+","; 
+					
+				}
+				var ppx = parseInt(player.position.x);
+				var ppz = parseInt(player.position.z);
+				str_charaters_pos += "p."+ppx+"."+ppz+","; 
+				console.log(str_charaters_pos);
+				
+				renderer.render( scene, camera );
+				
+				// 총알이랑 적이랑 부딪히면 알람
+				for(var i=0; i<enemies.length; i++){
+					for(var j=0; j<bullets.length; j++){
+						var b = bullets[j];
+						var e = enemies[i];
+						var ex = e.position.x;
+						var ez = e.position.z;
+						var bx = b.position.x;
+						var bz = b.position.z;
+						var r = Math.sqrt(((ex-bx)*(ex-bx))+((ez-bz)*(ez-bz)))
+						
+						if(r < 40){
+							console.log("맞았당", i, j);
+							scene.remove(e)
+							enemies.splice(i,1);
+							scene.remove(b)
+						
+							// 적을 한마리씩 처치할 때 마다 남은 악당 수가 1씩 감소 => for문이잖아
+							let obj_cnt_enemy = document.querySelector("#span_cnt_enemy");
+							let cnt_enemy = parseInt(obj_cnt_enemy.innerHTML);
+							// 모두 처치하면 you win! 이라는 알람창 띄우기
+							cnt_enemy--;
+							obj_cnt_enemy.innerHTML = cnt_enemy;
+							
+							if(cnt_enemy <= 0){
+								isOver = true;
+								setTimeout("alert('YOU WIN!!')",1);
+								renderer.render( scene, camera );
+								return;
+							}
+							return;
+						}
+					}
+				}
+			
          }
                 
          
@@ -201,6 +268,7 @@
 			bullets.push(p_bullet);
 		 };
 		 
+		 // 적과 플레이어 충돌
 		 function func1(){
 			for(let i=0;i<enemies.length;i++){
 				let num1 = player.position.z - enemies[i].position.z;
@@ -215,10 +283,10 @@
 					isOver = true;
 					return;
 				}
-
 			}
 		 }
 		 
+		 //총알과 적 충돌
 		 function func2(){
 			for(let i=0; i<enemies.length;i++){								
 				for(let j =0; j< bullets.length; j++){	
@@ -226,6 +294,7 @@
 					let num1 = bullets[j].position.z - enemies[i].position.z;
 					let num2 = bullets[j].position.x - enemies[i].position.x;
 					let r = Math.sqrt(num1*num1 + num2*num2);
+					
 					if(r<80){
 						//console.log("충돌",i,j);
 						
@@ -235,18 +304,22 @@
 						bullets.splice(i,1);
 						
 						let cnt_enemy = parseInt(span_cnt_enemy.innerHTML);
+						
 						cnt_enemy--;
 						span_cnt_enemy.innerHTML=cnt_enemy;
+
 						if(cnt_enemy<=0) {
 							setTimeout(alert("이김"),1);
-							renderer.render( scene, camera );
 							isOver = true;
+							renderer.render( scene, camera );
+							return;
 						}
 						return;
 					}
 				}	
 			}
 		 }
+		
 		 
 		 init();
 		 animate();

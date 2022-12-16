@@ -20,6 +20,10 @@ def allready():
 def canvas():
     return render_template('canvas.html')
 
+@app.route('/canvas2')
+def canvas2():
+    return render_template('canvas2.html')
+
 
 @socket_io.on("message")
 def request(message):

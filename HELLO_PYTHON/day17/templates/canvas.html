@@ -3,25 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+<style type="text/css">
+
+
+* { padding: 0; margin: 0; }
+canvas { background-color:lightyellow;; display: block; margin: 0 auto; }
+
+</style>
 </head>
 <body>
-<canvas>
+<canvas width="1000" height="1000">
 
 </canvas>
 </body>
 <script>
+const MARGIN = 500;
+
+var str = "b.-493.493,b.493.493,b.-493.-493,b.493.-493,p.0.0";
+
+var mems = str.split(",");
+
 let canvas = document.querySelector("canvas");
-canvas.style.width = "1000px";
 let context = canvas.getContext("2d");
-context.beginPath();
-context.arc(95, 50, 40, 0, 2 * Math.PI);
-context.arc(95, 50, 140, 0, 4 * Math.PI);
-context.arc(95, 50, 240, 0, 6 * Math.PI);
+for(let i=0;i<mems.length;i++){
+	var mem = mems[i].split(".")
+	var bpx = Number(mem[1])+MARGIN;
+	var bpy = Number(mem[2])+MARGIN;
+	
+	if(mem[0]=='b'){
+		context.beginPath();
+		context.fillStyle = "rgba(0, 0, 200, 0.5)";
+		context.fillRect((bpx-10),(bpy-10),10*2,10*2);
+		context.closePath();
+		
+		
+	} else if (mem[0]=='p'){
+		context.fillStyle = "rgba(0, 0, 200, 0.5)";
+		context.arc(10, 10, 10, 0, 2 * Math.PI);
+		context.closePath();
+	}
+}
+//context.stroke();
 
-context.fillRect(100,100,150,100);
-
-context.stroke();
-
-context.closePath();
 </script>
 </html>
