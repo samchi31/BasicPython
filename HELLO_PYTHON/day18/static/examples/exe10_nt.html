@@ -135,6 +135,7 @@
 
          let camera, scene, renderer;
          let player;
+		 let id_name = document.querySelector("#id_name");
 		
 		 //let isOver = true;
 		 
@@ -267,7 +268,8 @@
 					var r = Math.sqrt(((ex-px)*(ex-px))+((ez-pz)*(ez-pz)))
 					
 					if(r < 50){
-						setTimeout("alert('게임오버')",1);
+						//setTimeout("alert('게임오버')",1);
+						sock.send("dead:"+id_name.value);
 						isOver = true;
 						p_speed = 0;
 						return;
@@ -286,8 +288,8 @@
 				var ppz = parseInt(player.position.z);
 				str_charaters_pos += "p."+ppx+"."+ppz+","; 
 				//console.log(str_charaters_pos);
-
-				sock.send("display:"+str_charaters_pos);
+				
+				sock.send("display:"+id_name.value+":"+str_charaters_pos);
 				
 				renderer.render( scene, camera );
 				
@@ -374,58 +376,6 @@
 			bullets.push(p_bullet);
 		 };
 		 
-		 // 적과 플레이어 충돌
-		 function func1(){
-			for(let i=0;i<enemies.length;i++){
-				let num1 = player.position.z - enemies[i].position.z;
-				let num2 = player.position.x - enemies[i].position.x;
-				let r = Math.sqrt(Math.pow(num1,2) + Math.pow(num2,2));
-				
-				if(r < 80){
-					//console.log("충돌");
-					setTimeout(alert("게임오버"),1);
-					
-					p_speed = 0;
-					isOver = true;
-					return;
-				}
-			}
-		 }
-		 
-		 //총알과 적 충돌
-		 function func2(){
-			for(let i=0; i<enemies.length;i++){								
-				for(let j =0; j< bullets.length; j++){	
-				
-					let num1 = bullets[j].position.z - enemies[i].position.z;
-					let num2 = bullets[j].position.x - enemies[i].position.x;
-					let r = Math.sqrt(num1*num1 + num2*num2);
-					
-					if(r<80){
-						//console.log("충돌",i,j);
-						
-						scene.remove(enemies[i]);
-						scene.remove(bullets[j]);
-						enemies.splice(i,1);
-						bullets.splice(i,1);
-						
-						let cnt_enemy = parseInt(span_cnt_enemy.innerHTML);
-						
-						cnt_enemy--;
-						span_cnt_enemy.innerHTML=cnt_enemy;
-
-						if(cnt_enemy<=0) {
-							setTimeout(alert("이김"),1);
-							isOver = true;
-							renderer.render( scene, camera );
-							return;
-						}
-						return;
-					}
-				}	
-			}
-		 }
-		
 		 
 		 init();
 		 animate();
@@ -446,8 +396,14 @@
           		rv_ready(infos[1]);
           	if(infos[0]=='start')
           		rv_start(infos[1]);
-          	if(infos[0]=="done"){
-          		rv_done(infos[1]);
+          	if(infos[0]=="display"){
+          		rv_display(infos[1],infos[2]);
+          	}
+          	if(infos[0]=="dead"){
+          		rv_dead(info[1]);
+          	}
+          	if(infos[0]=="win"){
+          		rv_win(infos[1]);
           	}
           });
 
@@ -510,6 +466,47 @@
 			
 			isOver=false;
 			console.log(isOver);
+		};
+		
+		function rv_display(name,str){
+			const MARGIN = 500;
+			const ratio = 0.1;
+			var mems = str.split(",");
+			let idx = checkUser(name);
+
+			let canvases = document.querySelectorAll(".cv_user");
+			let context = canvases[idx].getContext("2d");
+			context.clearRect(0,0,canvases[idx].width,canvases[idx].height);
+			for(let i=0;i<mems.length;i++){
+				var mem = mems[i].split(".")
+				var bpx = Number(mem[1])+MARGIN;
+				var bpy = Number(mem[2])+MARGIN;
+				if(mem[0]=='b'){
+					context.beginPath();
+					context.fillStyle = "#ff0450";
+					context.fillRect((bpx-10)*ratio,(bpy-10)*ratio,10*2,10*2);
+					context.closePath();
+					
+					
+				} else if (mem[0]=='p'){
+					console.log(bpx,bpy);
+					context.beginPath();
+					context.fillStyle = "white";
+					context.arc(100, 100, 100, 0, 2*Math.PI, false);
+					context.closePath();
+				}
+			}
+			context.stroke();	
+		}
+		
+		function rv_dead(name){
+			let idx = checkUser(name);
+			let st_names = document.querySelectorAll(".st_names");
+			st_names[idx].style.backgroundColor = "red";
+		}
+		
+		function rv_win(name){
+			
 		}
       </script>
       <a href="javascript:fn_send()" style="position:absolute; top:500px">send</a>

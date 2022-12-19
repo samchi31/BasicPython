@@ -13,39 +13,45 @@ canvas { background-color:lightyellow;; display: block; margin: 0 auto; }
 </style>
 </head>
 <body>
-<canvas width="200" height="200">
+<canvas width="100" height="100">
 
 </canvas>
 </body>
 <script>
-const MARGIN = 500;
-const ratio = 0.2;
 
 var str = "b.-493.493,b.493.493,b.-493.-493,b.493.-493,p.0.0";
 
-var mems = str.split(",");
 
-let canvas = document.querySelector("canvas");
-let context = canvas.getContext("2d");
+function drawCanvas(str){
+	const MARGIN = 500;
+	const ratio = 0.1;
+	var mems = str.split(",");
 
-for(let i=0;i<mems.length;i++){
-	var mem = mems[i].split(".")
-	var bpx = Number(mem[1])+MARGIN;
-	var bpy = Number(mem[2])+MARGIN;
-	if(mem[0]=='b'){
-		context.beginPath();
-		context.fillStyle = "rgba(0, 0, 200, 0.5)";
-		context.fillRect((bpx-10)*ratio,(bpy-10)*ratio,10*2*ratio,10*2*ratio);
-		context.closePath();
-		
-		
-	} else if (mem[0]=='p'){
-		context.fillStyle = "rgba(0, 0, 200, 0.5)";
-		context.arc(bpx*ratio, bpy*ratio, 10*ratio, 0, 2*Math.PI);
-		context.closePath();
+	let canvas = document.querySelector("canvas");
+	let context = canvas.getContext("2d");
+
+	for(let i=0;i<mems.length;i++){
+		var mem = mems[i].split(".")
+		var bpx = Number(mem[1])+MARGIN;
+		var bpy = Number(mem[2])+MARGIN;
+		if(mem[0]=='b'){
+			context.beginPath();
+			context.fillStyle = "blue";
+			context.fillRect((bpx-10)*ratio,(bpy-10)*ratio,10*2,10*2);
+			context.closePath();
+			
+			
+		} else if (mem[0]=='p'){
+			console.log(bpx,bpy);
+			context.beginPath();
+			context.fillStyle = "red";
+			context.arc(bpx*ratio, bpy*ratio, 10, 0, 2*Math.PI);
+			context.closePath();
+		}
 	}
+	context.stroke();	
 }
-context.stroke();
+drawCanvas(str);
 
 </script>
 </html>
